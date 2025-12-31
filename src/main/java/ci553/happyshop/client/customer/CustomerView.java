@@ -227,7 +227,7 @@ public class CustomerView {
             }
 
 
-            if (action.startsWith("Avail")) { // button for the availible
+            if (action.startsWith("Avail")) { // button for the availible stock
                 action = "Show Available Stock";
             }
 
