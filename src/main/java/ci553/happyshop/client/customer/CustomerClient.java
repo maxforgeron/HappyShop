@@ -1,9 +1,14 @@
 package ci553.happyshop.client.customer;
-
+import java.net.URL;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import ci553.happyshop.storageAccess.DatabaseRW;
 import ci553.happyshop.storageAccess.DatabaseRWFactory;
 import javafx.application.Application;
 import javafx.stage.Stage;
+
+
 
 /**
  * A standalone Customer Client that can be run independently without launching the full system.
@@ -20,25 +25,83 @@ public class CustomerClient extends Application {
      * Creates the Model, View, and Controller objects and links them together for communication.
      * It also creates the DatabaseRW instance via the DatabaseRWFactory and injects it into the CustomerModel.
      * Once the components are linked, the customer interface (view) is started.
-     *
+     * <p>
      * Also creates the RemoveProductNotifier, which tracks the position of the Customer View
      * and is triggered by the Customer Model when needed.
      */
     @Override
-    public void start(Stage window) {
-        CustomerView cusView = new CustomerView();
+    public void start (Stage stage) {
+
         CustomerController cusController = new CustomerController();
+        CustomerView cusView = new CustomerView();
         CustomerModel cusModel = new CustomerModel();
         DatabaseRW databaseRW = DatabaseRWFactory.createDatabaseRW();
 
         cusView.cusController = cusController;
         cusController.cusModel = cusModel;
+        cusController.customerClient = this;
         cusModel.cusView = cusView;
         cusModel.databaseRW = databaseRW;
-        cusView.start(window);
+        cusView.start(stage);
 
-        //RemoveProductNotifier removeProductNotifier = new RemoveProductNotifier();
-        //removeProductNotifier.cusView = cusView;
-        //cusModel.removeProductNotifier = removeProductNotifier;
+
+    }
+
+    public void playPurchaseSound() {
+        try {
+            URL soundURL = getClass().getResource("/sounds/purchase.wav");
+
+            if (soundURL == null) {
+                System.err.println("search.wav NOT FOUND");
+                return;
+            }
+
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            clip.start();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public void playSearchSound() {
+        try {
+            URL soundURL = getClass().getResource("/sounds/search.wav");
+
+            if (soundURL == null) {
+                System.err.println("search.wav NOT FOUND");
+                return;
+            }
+
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            clip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,5 +1,5 @@
 package ci553.happyshop.client.customer;
-
+import ci553.happyshop.utility.SoundFX;
 import ci553.happyshop.utility.UIStyle;
 import ci553.happyshop.utility.WinPosManager;
 import ci553.happyshop.utility.WindowBounds;
@@ -15,8 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.sql.SQLException;
+
 
 /**
  * The CustomerView is separated into two sections by a line :
@@ -26,7 +25,7 @@ import java.sql.SQLException;
  *    depending on the current context. Only one of these is shown at a time.
  */
 
-public class CustomerView  {
+public class CustomerView {
     public CustomerController cusController;
 
     private final int WIDTH = UIStyle.customerWinWidth;
@@ -67,12 +66,13 @@ public class CustomerView  {
         hbRoot.setAlignment(Pos.CENTER);
         hbRoot.setStyle(UIStyle.rootStyle);
 
+
         Scene scene = new Scene(hbRoot, WIDTH, HEIGHT);
         window.setScene(scene);
         window.setTitle("🛒 HappyShop Customer Client");
-        WinPosManager.registerWindow(window,WIDTH,HEIGHT); //calculate position x and y for this window
+        WinPosManager.registerWindow(window, WIDTH, HEIGHT); //calculate position x and y for this window
         window.show();
-        viewWindow=window;// Sets viewWindow to this window for future reference and management.
+        viewWindow = window;// Sets viewWindow to this window for future reference and management.
     }
 
     private VBox createSearchPage() {
@@ -93,14 +93,35 @@ public class CustomerView  {
         tfName.setStyle(UIStyle.textFiledStyle);
         HBox hbName = new HBox(10, laName, tfName);
 
-        Label laPlaceHolder = new Label(  " ".repeat(15)); //create left-side spacing so that this HBox aligns with others in the layout.
+        Label laPlaceHolder = new Label(" ".repeat(15)); //create left-side spacing so that this HBox aligns with others in the layout.
         Button btnSearch = new Button("Search");
         btnSearch.setStyle(UIStyle.buttonStyle);
         btnSearch.setOnAction(this::buttonClicked);
-        Button btnAddToTrolley = new Button("Add to Trolley");
+        Button btnAddToTrolley = new Button("Add to Cart");
         btnAddToTrolley.setStyle(UIStyle.buttonStyle);
         btnAddToTrolley.setOnAction(this::buttonClicked);
-        HBox hbBtns = new HBox(10, laPlaceHolder,btnSearch, btnAddToTrolley);
+        Button btnShowAvailable = new Button("Available Stock");
+        btnShowAvailable.setStyle(UIStyle.buttonStyle);
+        btnShowAvailable.setOnAction(this::buttonClicked);
+        {
+            try {
+                cusController.doAction("Available Stock");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        btnSearch.setPrefWidth(120);
+        btnAddToTrolley.setPrefWidth(120);
+        HBox hbTopButtons = new HBox(8, laPlaceHolder, btnSearch, btnAddToTrolley);
+        hbTopButtons.setAlignment(Pos.CENTER);
+
+        HBox hbBottomButton = new HBox(btnShowAvailable);
+        hbBottomButton.setAlignment(Pos.CENTER);
+
+        VBox vbButtons = new VBox(8, hbTopButtons, hbBottomButton);
+        vbButtons.setAlignment(Pos.CENTER);
+
 
         ivProduct = new ImageView("imageHolder.jpg");
         ivProduct.setFitHeight(60);
@@ -115,7 +136,7 @@ public class CustomerView  {
         HBox hbSearchResult = new HBox(5, ivProduct, lbProductInfo);
         hbSearchResult.setAlignment(Pos.CENTER_LEFT);
 
-        VBox vbSearchPage = new VBox(15, laPageTitle, hbId, hbName, hbBtns, hbSearchResult);
+        VBox vbSearchPage = new VBox(15, laPageTitle, hbId, hbName, vbButtons, hbSearchResult);
         vbSearchPage.setPrefWidth(COLUMN_WIDTH);
         vbSearchPage.setAlignment(Pos.TOP_CENTER);
         vbSearchPage.setStyle("-fx-padding: 15px;");
@@ -124,12 +145,12 @@ public class CustomerView  {
     }
 
     private VBox CreateTrolleyPage() {
-        Label laPageTitle = new Label("🛒🛒  Trolley 🛒🛒");
+        Label laPageTitle = new Label("🛒🛒  Cart 🛒🛒");
         laPageTitle.setStyle(UIStyle.labelTitleStyle);
 
         taTrolley = new TextArea();
         taTrolley.setEditable(false);
-        taTrolley.setPrefSize(WIDTH/2, HEIGHT-50);
+        taTrolley.setPrefSize(WIDTH / 2, HEIGHT - 50);
 
         Button btnCancel = new Button("Cancel");
         btnCancel.setOnAction(this::buttonClicked);
@@ -139,7 +160,7 @@ public class CustomerView  {
         btnCheckout.setOnAction(this::buttonClicked);
         btnCheckout.setStyle(UIStyle.buttonStyle);
 
-        HBox hbBtns = new HBox(10, btnCancel,btnCheckout);
+        HBox hbBtns = new HBox(10, btnCancel, btnCheckout);
         hbBtns.setStyle("-fx-padding: 15px;");
         hbBtns.setAlignment(Pos.CENTER);
 
@@ -156,7 +177,7 @@ public class CustomerView  {
 
         taReceipt = new TextArea();
         taReceipt.setEditable(false);
-        taReceipt.setPrefSize(WIDTH/2, HEIGHT-50);
+        taReceipt.setPrefSize(WIDTH / 2, HEIGHT - 50);
 
         Button btnCloseReceipt = new Button("OK & Close"); //btn for closing receipt and showing trolley page
         btnCloseReceipt.setStyle(UIStyle.buttonStyle);
@@ -169,27 +190,6 @@ public class CustomerView  {
         vbReceiptPage.setStyle(UIStyle.rootStyleYellow);
         return vbReceiptPage;
     }
-
-
-    private void buttonClicked(ActionEvent event) {
-        try{
-            Button btn = (Button)event.getSource();
-            String action = btn.getText();
-            if(action.equals("Add to Trolley")){
-                showTrolleyOrReceiptPage(vbTrolleyPage); //ensure trolleyPage shows if the last customer did not close their receiptPage
-            }
-            if(action.equals("OK & Close")){
-                showTrolleyOrReceiptPage(vbTrolleyPage);
-            }
-            cusController.doAction(action);
-        }
-        catch(SQLException e){
-            e.printStackTrace();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 
     public void update(String imageName, String searchResult, String trolley, String receipt) {
 
@@ -213,6 +213,55 @@ public class CustomerView  {
 
     WindowBounds getWindowBounds() {
         return new WindowBounds(viewWindow.getX(), viewWindow.getY(),
-                  viewWindow.getWidth(), viewWindow.getHeight());
+                viewWindow.getWidth(), viewWindow.getHeight());
+
+    }
+
+    private void buttonClicked(ActionEvent event) {
+        try {
+            Button btn = (Button) event.getSource();
+            String action = btn.getText().trim();
+
+            if ("Add to Cart".equals(action)){     // Changed the add to trolley to add to cart so its fits within the frame
+            action = "Add to Trolley";
+            }
+
+
+            if (action.startsWith("Avail")) { // button for the availible
+                action = "Show Available Stock";
+            }
+
+            if ("OK & Close".equals(action)) {
+                SoundFX.playPowerOff();
+            }
+
+            if ("Add to Trolley".equals(action) || "OK & Close".equals(action)) {
+                showTrolleyOrReceiptPage(vbTrolleyPage);
+            }
+
+            cusController.doAction(action);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
