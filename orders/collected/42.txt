@@ -1,0 +1,12 @@
+Order ID: 42 
+State: Collected
+OrderedDateTime: 2025-12-30 15:38:09 
+ProgressingDateTime: 2025-12-30 16:01:38
+CollectedDateTime: 2025-12-30 16:01:40
+Items:
+ 0001    40 inch TV         ( 1) £ 269.00
+ 0004    Watch              ( 1) £  29.99
+ 0008    USB2 drive         ( 1) £   7.99
+--------------------------------------------
+ Total                               £ 306.98
+
