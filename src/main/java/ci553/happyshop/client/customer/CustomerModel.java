@@ -63,28 +63,56 @@ public class CustomerModel {
         updateView();
     }
 
-    void addToTrolley() {
-        if (theProduct != null) {
 
-            // trolley.add(theProduct) — Product is appended to the end of the trolley.
-            // To keep the trolley organized, add code here or call a method that:
-            //TODO
-            // 1. Merges items with the same product ID (combining their quantities).
-            // 2. Sorts the products in the trolley by product ID.
-            trolley.add(theProduct);
-            trolley = groupProductsById(trolley); // lists the trolley in order of their IDs.
-            trolley.sort(Comparator.comparing(Product::getProductId)); // Combinds the same order by placing them under a x2 etc
-            displayTaTrolley = ProductListFormatter.buildString(trolley);
+
+    //TODO list 1
+    // 1. Merges items with the same product ID (combining their quantities).
+    // 2. Sorts the products in the trolley by product ID.
+
+    void addToTrolley() {
+        if (theProduct == null) {
+            displayLaSearchResult = "must search and get an available product before add to trolley";
+            displayTaReceipt = "";
+            updateView();
+            return;
         }
-        else{
-            displayLaSearchResult = "Sorry this item is now out of stock";
-            System.out.println("must search and get an available product before add to trolley");
+
+        String id = theProduct.getProductId();
+
+
+        for (Product tp : trolley) {
+            if (tp.getProductId().equals(id)) {
+                tp.setOrderedQuantity(tp.getOrderedQuantity() + 1);
+                displayTaTrolley = ProductListFormatter.buildString(trolley);
+                displayTaReceipt = "";
+                updateView();
+                return;
+            }
         }
-        displayTaReceipt=""; // Clear receipt to switch back to trolleyPage (receipt shows only when not empty)
+
+
+        Product p = new Product(
+                theProduct.getProductId(),
+                theProduct.getProductDescription(),
+                theProduct.getProductImageName(),
+                theProduct.getUnitPrice(),
+                theProduct.getStockQuantity()
+        );
+        p.setOrderedQuantity(1);
+        trolley.add(p);
+
+        // 3) Keep trolley tidy
+        trolley.sort(Comparator.comparing(Product::getProductId));
+
+        displayTaTrolley = ProductListFormatter.buildString(trolley);
+        displayTaReceipt = "";
         updateView();
     }
 
-// To do list
+
+
+
+    // TODO list 2
     void checkOut() throws IOException, SQLException {
 
         if (!trolley.isEmpty()) {
@@ -130,7 +158,7 @@ public class CustomerModel {
                 // updates the trolley display after removal
                 displayTaTrolley = ProductListFormatter.buildString(trolley);
 
-                // 2) Shows the message window instead of changing displayLaSearchResult
+                //  Shows the message window instead of changing displayLaSearchResult
                 new RemoveProductNotifier().showRemovalMsg(errorMsg.toString());
 
                 // notifier.closeNotifierWindow();

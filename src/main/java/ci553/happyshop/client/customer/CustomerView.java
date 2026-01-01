@@ -157,8 +157,8 @@ public class CustomerView {
         btnCancel.setStyle(UIStyle.buttonStyle);
 
         Button btnCheckout = new Button("Check Out");
+        btnCheckout.setStyle(UIStyle.greenFillBtnStyle);
         btnCheckout.setOnAction(this::buttonClicked);
-        btnCheckout.setStyle(UIStyle.buttonStyle);
 
         HBox hbBtns = new HBox(10, btnCancel, btnCheckout);
         hbBtns.setStyle("-fx-padding: 15px;");
