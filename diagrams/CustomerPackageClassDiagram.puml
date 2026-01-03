@@ -1,0 +1,62 @@
+@startuml
+title HappyShop - Customer Package Class Diagram
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "ci553.happyshop.client.customer" {
+
+  class CustomerClient {
+    +main(args: String[]) : void
+    +start(stage: Stage) : void
+    +playPurchaseSound() : void
+    +playSearchSound() : void
+  }
+
+  class CustomerView {
+    +cusController : CustomerController
+    -WIDTH : int
+    -HEIGHT : int
+    -COLUMN_WIDTH : int
+    ~tfId : TextField
+    ~tfName : TextField
+
+    +start(window: Stage) : void
+    +update(imageName: String, searchResult: String, trolley: String, receipt: String) : void
+  }
+
+  class CustomerController {
+    +cusModel : CustomerModel
+    +customerClient : CustomerClient
+    +doAction(action: String) : void
+  }
+
+  class CustomerModel {
+    +cusView : CustomerView
+    +databaseRW : DatabaseRW
+  }
+
+  class RemoveProductNotifier
+}
+
+CustomerClient --> CustomerController : creates
+CustomerClient --> CustomerView : creates
+CustomerClient --> CustomerModel : creates
+
+CustomerView --> CustomerController : calls
+CustomerController --> CustomerModel : delegates
+CustomerModel --> CustomerView : updates
+
+package "External" {
+  interface DatabaseRW
+  class DatabaseRWFactory
+  class UIStyle
+  class SoundFX
+}
+
+CustomerClient ..> DatabaseRWFactory
+CustomerModel --> DatabaseRW
+CustomerView ..> UIStyle
+CustomerView ..> SoundFX
+
+@enduml
