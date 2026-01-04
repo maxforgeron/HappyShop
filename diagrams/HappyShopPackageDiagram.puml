@@ -1,0 +1,45 @@
+@startuml
+title HappyShop - Package Diagram
+skinparam packageStyle rectangle
+left to right direction
+
+package "ci553.happyshop" {
+
+  package "catalogue" as catalogue
+
+  package "client" as client {
+    package "customer" as customer
+    package "warehouse" as warehouse
+    package "picker" as picker
+    package "orderTracker" as orderTracker
+    package "emergency" as emergency
+  }
+
+  package "orderManagement" as orderManagement
+  package "storageAccess" as storageAccess
+  package "systemSetup" as systemSetup
+  package "utility" as utility
+}
+
+
+
+
+customer ..> utility : uses
+warehouse ..> utility : uses
+picker ..> utility : uses
+orderTracker ..> utility : uses
+emergency ..> utility : uses
+
+customer ..> storageAccess : reads/writes
+warehouse ..> storageAccess : reads/writes
+picker ..> storageAccess : reads/writes
+orderTracker ..> storageAccess : reads/writes
+
+orderManagement ..> storageAccess : reads/writes
+orderManagement ..> utility : uses
+
+customer ..> catalogue : uses
+warehouse ..> catalogue : uses
+
+@enduml
+

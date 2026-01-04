@@ -1,0 +1,43 @@
+@startuml
+left to right direction
+
+actor Customer
+actor "Warehouse Staff" as Warehouse
+actor "Order Staff" as OrderStaff
+
+rectangle "HappyShop System" {
+
+  (Search Product)
+  (View Available Stock)
+  (Add Product to Cart)
+  (View Cart)
+  (Checkout)
+  (View Receipt)
+
+  (View Orders Waiting)
+  (Progress Order)
+
+  (Search Product in Stock)
+  (Add New Product)
+  (Edit Product)
+  (Update Stock)
+  (Delete Product)
+}
+
+Customer --> (Search Product)
+Customer --> (View Available Stock)
+Customer --> (Add Product to Cart)
+Customer --> (View Cart)
+Customer --> (Checkout)
+Customer --> (View Receipt)
+
+Warehouse --> (Search Product in Stock)
+Warehouse --> (Add New Product)
+Warehouse --> (Edit Product)
+Warehouse --> (Update Stock)
+Warehouse --> (Delete Product)
+
+OrderStaff --> (View Orders Waiting)
+OrderStaff --> (Progress Order)
+
+@enduml

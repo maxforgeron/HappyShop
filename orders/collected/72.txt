@@ -1,0 +1,10 @@
+Order ID: 72 
+State: Collected
+OrderedDateTime: 2026-01-01 16:49:46 
+ProgressingDateTime: 2026-01-01 16:49:49
+CollectedDateTime: 2026-01-01 16:49:54
+Items:
+ 0001    40 Inch Smart TV   ( 1) £ 199.99
+--------------------------------------------
+ Total                               £ 199.99
+
